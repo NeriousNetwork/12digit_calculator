@@ -1,5 +1,7 @@
 'use strict';
 
+//Calculator
+
 //display
 const display = document.getElementById('seg_dis');
 const d_memory = document.querySelector('.memory');
