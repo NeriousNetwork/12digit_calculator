@@ -23,7 +23,7 @@ const btn_eq = document.getElementById('btn--eq');
 
 //buttons - numerical
 const btn_num = []
-for (let i = 0; i < 10; i++) //Iterates over all buttons with numbers and assigns it to an array{
+for (let i = 0; i < 10; i++) {//Iterates over all buttons with numbers and assigns it to an array
     btn_num[i] = document.getElementById(`btn--${i}`)
 }
 console.log(btn_num)
