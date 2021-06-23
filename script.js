@@ -25,13 +25,15 @@ const btn_eq = document.getElementById('btn--eq');
 
 //buttons - numerical
 const btn_num = []
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 10; i++) //Iterates over all buttons with numbers and assigns it to an array{
     btn_num[i] = document.getElementById(`btn--${i}`)
 }
 console.log(btn_num)
 const btn_00 = document.getElementById('btn--00');
 const btn_dec = document.getElementById('btn--.')
 
+
+//defaul states
 let state = false;
 let mem = 0;
 let total = 0;
