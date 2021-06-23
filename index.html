@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale = 0.5" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel='stylesheet' href='style.css' />
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?" />
+    <title>Generic 12-digit calculator</title>
+</head>
+
+<body>
+    <main>
+        <h1>Generic Twelve Digit Calulator</h1>
+        <section class="calculator-viewport">
+            <div class='center'>
+                <div class='chassis'>
+                    <div class='number-screen'>
+                        <h2 class="dseg7 off" id='seg_off'>8.8.8.8.8.8.8.8.8.8.8.</h2>
+                        <h2 class="dseg7 on hidden" id='seg_dis'>0</h2>
+                        <p>
+                        <div class='subd memory off'>MEMORY</div>
+                        <div class='subd gt off'>GRAND TOTAL</div>
+                        </p>
+                    </div>
+                    <div class='top-header'>
+                        <table>
+                            <tr>
+                                <td>AUTO POWER OFF</td>
+                                <td id='addspace' rowspan=2>
+                                    <h3 class='subtext'>Shenzen</h3>
+                                    <p class='subtext'> 12-DIGIT DUAL POWER<br>CALCULATOR
+                                </td>
+                                </p>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class='solar-panel'>
+                                        &nbsp&nbsp&nbsp<br>&nbsp&nbsp
+                                    </div>
+                                </td>
+                                <td class='right'><button class='btn txt' id='btn--on'>ON/CLR</button></ </tr>
+                        </table>
+                    </div>
+                    <div class=button_array>
+                        <!--buttons start here-->
+                        <button class='btn a1' id='mem--add'>M+</button>
+                        <button class='btn a1' id='mem--sub'>M−</button>
+                        <button class='btn a1' id='mem--recall'>MRC</button>
+                        <button class='btn a1' id='mem--gt'>GT</button>
+                        <button class='btn a1' id='btn--off'>OFF</button>
+                    </div>
+                    <div class='lower-button'>
+                        <div class='horizontal left'>
+                            <button class='btn a2' id='btn--7'>7</button>
+                            <button class='btn a2' id='btn--8'>8</button>
+                            <button class='btn a2' id='btn--9'>9</button>
+                            <button class='btn a2' id='btn--4'>4</button>
+                            <button class='btn a2' id='btn--5'>5</button>
+                            <button class='btn a2' id='btn--6'>6</button>
+                            <button class='btn a2' id='btn--1'>1</button>
+                            <button class='btn a2' id='btn--2'>2</button>
+                            <button class='btn a2' id='btn--3'>3</button>
+                            <button class='btn a2' id='btn--0'>0</button>
+                            <button class='btn a2' id='btn--00'>00</button>
+                            <button class='btn a2' id='btn--.'>.</button>
+                        </div>
+                        <div class='horizontal right'>
+                            <button class='btn a3' id='btn--div'>÷</button>
+                            <button class='btn a3' id='btn--trunc'>▶</button>
+                            <button class='btn a3' id='btn--mul'>×</button>
+                            <button class='btn a3' id='btn--prc'>%</button>
+                            <button class='btn a3' id='btn--min'>−</button>
+                            <button class='btn a3' id='btn--mup'>MU</button>
+                            <button class='btn a3 spec' id='btn--add'>+</button>
+                            <button class='btn a3 spec' id='btn--eq'>=</button>
+                            <!--end of buttons-->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            </div>
+        </section>
+    </main>
+    <script src='script.js'></script>
+</body>
+
+</html>
