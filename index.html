@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale = 0.5" />
+    <meta name="viewport" content="width=device-height, initial-scale = 1" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel='stylesheet' href='style.css' />
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?" />
@@ -15,17 +15,17 @@
         <h1>Generic Twelve Digit Calulator</h1>
         <section class="calculator-viewport">
             <div class='center'>
-                <div class='chassis'>
+                <div class='chassis' data-element="container" data-container="chassis">
                     <div class='number-screen'>
-                        <h2 class="dseg7 off" id='seg_off'>8.8.8.8.8.8.8.8.8.8.8.</h2>
-                        <h2 class="dseg7 on hidden" id='seg_dis'>0</h2>
+                        <h2 class="dseg7 off" id='seg_off' data-element="display" data-display='off'>8.8.8.8.8.8.8.8.8.8.8.</h2>
+                        <h2 class="dseg7 on hidden" id='seg_dis' data-element="display" data-display="on">0</h2>
                         <p>
-                        <div class='subd memory off'>MEMORY</div>
-                        <div class='subd gt off'>GRAND TOTAL</div>
-                        <div class='subd stall off'>STALL</div>
+                        <div class='subd memory off' data-element="display" data-display='memory'>MEMORY</div>
+                        <div class='subd gt off' data-element="display" data-display='grandTotal'>GRAND TOTAL</div>
+                        <div class='subd stall off' data-element="display" data-display="halt">STALL</div>
                         </p>
                     </div>
-                    <div class='top-header'>
+                    <div class='top-header' data-element="container" data-container="display">
                         <table>
                             <tr>
                                 <td>AUTO POWER OFF</td>
@@ -41,49 +41,77 @@
                                         &nbsp&nbsp&nbsp<br>&nbsp&nbsp
                                     </div>
                                 </td>
-                                <td class='right'><button class='btn txt' id='btn--on'>ON/CLR</button></ </tr>
+                                <td class='right'><button class='btn txt' id='btn--on' data-element='button' data-button='onclear'>ON/CLR</button></ </tr>
                         </table>
                     </div>
-                    <div class=button_array>
-                        <!--buttons start here-->
-                        <button class='btn a1' id='mem--add'>M+</button>
-                        <button class='btn a1' id='mem--sub'>M−</button>
-                        <button class='btn a1' id='mem--recall'>MRC</button>
-                        <button class='btn a1' id='mem--gt'>GT</button>
-                        <button class='btn a1' id='btn--off'>OFF</button>
+                    <div class='buttons' data-element="container" data-container="buttons">
+                        <div class='top_row'>
+                            <!--buttons start here-->
+                            <button class='btn a1' id='mem--add' data-element="button" data-button='memory' data-memory = 'memory_add'>M+</button>
+                            <button class='btn a1' id='mem--sub' 
+                            data-element = 'button' data-button="memory" data-memory="memory_subtract">M−</button>
+                            <button class='btn a1' id='mem--recall' data-element = 'button' data-button="memory" data-memory="memory_recall">MRC</button>
+                            <button class='btn a1' id='gt' data-element = 'button' data-button="grandTotal">GT</button>
+                            <button class='btn a1' id='btn--off' data-element = 'button' data-button="off">OFF</button>
+                        </div>
+                        <div class='lower-button' data-element="container" data-container="buttons">
+                            <div class='horizontal left'>
+                                <button class='btn a2' id='btn--7' data-element="button" data-button='input' data-value=7>7</button>
+                                <button class='btn a2' id='btn--8'
+                                data-element="button" data-button='input' data-value=8>8</button>
+                                <button class='btn a2' id='btn--9' data-element="button" data-button='input' data-value=9>9</button>
+                                <button class='btn a2' id='btn--4'
+                                data-element="button" data-button='input' data-value=4>4</button>
+                                <button class='btn a2' id='btn--5'
+                                data-element="button" data-button='input' data-value=5>5</button>
+                                <button class='btn a2' id='btn--6'
+                                data-element="button" data-button='input' data-value=6>6</button>
+                                <button class='btn a2' id='btn--1'
+                                data-element="button" data-button='input' data-value=1>1</button>
+                                <button class='btn a2' id='btn--2'
+                                data-element="button" data-button='input' data-value=2>2</button>
+                                <button class='btn a2' id='btn--3'
+                                data-element="button" data-button='input' data-value=3>3</button>
+                                <button class='btn a2' id='btn--0'
+                                data-element="button" data-button='input' data-value=0>0</button>
+                                <button class='btn a2' id='btn--00'
+                                data-element="button" data-button='input' data-value=00>00</button>
+                                <button class='btn a2' id='btn--.'
+                                data-element="button" data-button='input' data-value='.'>.</button>
+                            </div>
+                            <div class='horizontal right'>
+                                <button class='btn a3' id='btn--div' data-element="button"
+                                data-button="operation" data-operation='4'>÷</button>
+                                <button class='btn a3' id='btn--trunc' data-element="button"
+                                data-button="operation" data-operation='7'>▶</button>
+                                <button class='btn a3' id='btn--mul' data-element="button"
+                                data-button="operation" data-operation='3'>×</button>
+                                <button class='btn a3' id='btn--prc' data-element="button"
+                                data-button="operation" data-operation='5'>%</button>
+                                <button class='btn a3' id='btn--min' data-element="button"
+                                data-button="operation" data-operation='2'>−</button>
+                                <button class='btn a3' id='btn--mup' 
+                                data-element="button"
+                                data-button="operation" data-operation='6'>MU</button>
+                                <button class='btn a3 spec' id='btn--add' 
+                                data-element="button"
+                                data-button="operation" data-operation='1'>+</button>
+                                <button class='btn a3 spec' 
+                                data-element="button"
+                                id='btn--eq' data-button="equals">=</button>
+                                <!--end of buttons-->
+                            </div>
+
                     </div>
-                    <div class='lower-button'>
-                        <div class='horizontal left'>
-                            <button class='btn a2' id='btn--7'>7</button>
-                            <button class='btn a2' id='btn--8'>8</button>
-                            <button class='btn a2' id='btn--9'>9</button>
-                            <button class='btn a2' id='btn--4'>4</button>
-                            <button class='btn a2' id='btn--5'>5</button>
-                            <button class='btn a2' id='btn--6'>6</button>
-                            <button class='btn a2' id='btn--1'>1</button>
-                            <button class='btn a2' id='btn--2'>2</button>
-                            <button class='btn a2' id='btn--3'>3</button>
-                            <button class='btn a2' id='btn--0'>0</button>
-                            <button class='btn a2' id='btn--00'>00</button>
-                            <button class='btn a2' id='btn--.'>.</button>
-                        </div>
-                        <div class='horizontal right'>
-                            <button class='btn a3' id='btn--div'>÷</button>
-                            <button class='btn a3' id='btn--trunc'>▶</button>
-                            <button class='btn a3' id='btn--mul'>×</button>
-                            <button class='btn a3' id='btn--prc'>%</button>
-                            <button class='btn a3' id='btn--min'>−</button>
-                            <button class='btn a3' id='btn--mup'>MU</button>
-                            <button class='btn a3 spec' id='btn--add'>+</button>
-                            <button class='btn a3 spec' id='btn--eq'>=</button>
-                            <!--end of buttons-->
-                        </div>
                     </div>
                 </div>
-
+                
             </div>
+            <p class='copyright'>© 2021, <a href='https://github.com/NeriousNetwork'>NeriousNetwork</a> (<a href='https://github.com/SporadicToast'>SporadicToast</a>, <a href="https://github.com/Neriouswag">Neriouswag</a>)</p>
             </div>
+            
         </section>
+        
     </main>
     <script src='script.js'></script>
 </body>
