@@ -23,7 +23,7 @@ buttons = an array of all buttons in the calculator
   #totals = []; //List of all appended results from '=' or 'MU'
   #memory_register = []; //list of all saved values in memory
   display_value = 0; //value of current display
-  #display_valuestr = "";
+  display_valuestr = "";
   #state = false; //0 if calculator is off, 1 if on.
   #stall = false; //0 if stall is off, 1 if on
   #simulatezero = false; //a simulate zero
@@ -65,12 +65,14 @@ buttons = an array of all buttons in the calculator
     /*
       Wipes all registers and storage. Usually used for off/clear.
     */
+    this.display(0);
     this.#totals = [];
     this.label_display.textContent = 0;
     this.#totals = [];
     this.#memory_register = [];
-    this.#display_valuestr = "";
+    this.display_valuestr = "";
     this.display_value = 0;
+
     this.#simulatezero = false;
     this.chain = false;
     this.#operations = [];
@@ -137,29 +139,28 @@ buttons = an array of all buttons in the calculator
       */
 
     //simulate zero handler
-    console.log("here1");
     if (this.#simulatezero) {
       //simulate zero handler
-      this.#display_valuestr = "";
+      this.display_valuestr = "";
       this.display_value = 0;
       this.#simulatezero = false;
     }
-    if (this.#display_valuestr.includes(".") && btn_val === ".") return; //reject already decimal
-    this.#display_valuestr = `${this.#display_valuestr}${btn_val}`;
+    if (this.display_valuestr.includes(".") && btn_val === ".") return; //reject already decimal
+    this.display_valuestr = `${this.display_valuestr}${btn_val}`;
     this.display_value = +`${this.display_value}${btn_val}`;
-    if (+this.#display_valuestr === this.display_value) {
+    if (+this.display_valuestr === this.display_value) {
       //if the numerical version of the string is similar to the numerical variable, display and end
       this.label_display.textContent = +this.display_value;
     } else {
       //decimal handler
-      console.log(this.#display_valuestr, this.display_value);
-      if (this.#display_valuestr.slice(-1) === ".") {
+      console.log(this.display_valuestr, this.display_value);
+      if (this.display_valuestr.slice(-1) === ".") {
         //checks if the last index of the string is a decimal, then if it is, it displays the display value with a decimal literal
         this.label_display.textContent = `${this.display_value}.`;
       } else {
-        if (this.#display_valuestr.includes(".")) {
+        if (this.display_valuestr.includes(".")) {
           //returns the display value.
-          this.display_value = +`${this.#display_valuestr}`;
+          this.display_value = +`${this.display_valuestr}`;
           this.label_display.textContent = +this.display_value;
         }
       }
@@ -169,16 +170,22 @@ buttons = an array of all buttons in the calculator
   display(value) {
     //generalized function to show something on the calculator screen
     if (this.canAccept()) {
+      this.label_display.classList.add("hidden");
       this.display_value = +value;
       this.label_display.textContent = value;
+      setTimeout(() => this.label_display.classList.remove("hidden"));
+
       console.log(this);
     }
   }
 
-  computation(a, b, operation) {
+  computation(a, b = 0, operation = 0) {
     //generalized function for all arithmetic
     let res;
     switch (operation) {
+      case 0:
+        //fallback
+        return a;
       case 1:
         //Addition
         res = a + b;
@@ -208,14 +215,32 @@ buttons = an array of all buttons in the calculator
         } else {
           res = undefined;
         }
-      case 7:
-      //Truncate
-      case 99:
-      //Equality
+      //case 7:
+      //Truncate available as method
+      //case 99:
+      //Equality available as a method
     }
     return res;
   }
-
+  truncate() {
+    this.display_valuestr = this.display_valuestr.slice(0, -1);
+    console.log(this.display_valuestr);
+    if (this.display_valuestr == "") {
+      this.display_value = 0;
+      this.display(0);
+      this.display_valuestr = 0 + "";
+    } else {
+      this.display_value = +this.display_valuestr;
+      this.display_valuestr = this.display_value + "";
+      this.display(this.display_value);
+    }
+  }
+  restDisplay(res) {
+    this.display_value = res;
+    this.display_valuestr = res + "";
+    this.#simulatezero = true;
+    this.display(res);
+  }
   operation(btn, style = 1) {
     let btn_val;
     if (btn.dataset?.operation) {
@@ -224,44 +249,81 @@ buttons = an array of all buttons in the calculator
       btn_val = btn;
     }
     const last_op = this.lastOperation;
-    //if equality operation
-    if (last_op === undefined) {
+    let res;
+    console.log("In operation", btn_val);
+
+    if (btn_val === 7) {
+      this.truncate();
+      return;
+    }
+    if (!last_op) {
       this.#operations.push([this.display_value, btn_val, true]);
       this.#simulatezero = true;
       console.log("No last op");
+      return;
     } else {
-      if (last_op[2] === false) {
-        //non chain handling
-        this.#operations.push([this.display_value, btn_val, true]);
-      } else {
-        //chain handling
-        const res = this.computation(
-          last_op[0],
-          this.display_value,
-          last_op[1]
-        );
-        this.#operations.push([res, btn_val, true]);
-        this.#simulatezero = true;
-        if (style === 1) this.display(res);
+      //percentage handler
+      if (btn_val === 5 || btn_val === 6) {
+        res = this.computation(last_op[0], this.display_value, btn_val);
+        if (!res) return;
+        this.restDisplay;
+        this.#memory_register.push(res);
+        this.#operations.push([this.display_value, 99, false]);
+        this.#operations.push(res, 0, false);
         return res;
       }
+      //equals hander
+      if (last_op[1] === 99 && btn_val === 99) {
+        res = this.computation(
+          this.display_value,
+          this.#equalsoperation[0],
+          this.#equalsoperation[1]
+        );
+        this.restDisplay(res);
+        this.#memory_register.push(res);
+        this.#operations.push([res, 99, false]);
+        return res;
+      } else {
+        if (this.#simulatezero == true) {
+          this.#operations.push([this.display_value, btn_val, true]);
+          this.#simulatezero = true;
+          return;
+        }
+        console.log("Last operation not an equal operation");
+        if (last_op[2] == false) {
+          console.log("Appending empty operation.");
+          this.#operations.push([this.display_value, btn_val, true]);
+          this.#simulatezero = true;
+        } else {
+          console.log("Performing operation");
+          res = this.computation(last_op[0], this.display_value, last_op[1]);
+          console.log(calc);
+          this.#operations.push([res, btn_val, true]);
+          this.#simulatezero = true;
+          if (style === 1) this.display(res);
+          if (btn_val === 99) this.#memory_register.push(res);
+        }
+      }
     }
+    return res;
   }
 
   equals() {
     const last_op = this.lastOperation;
     if (!last_op) return;
-    let result;
     if (last_op[1] === 99) {
       //read from this.#equalsoperation
-      this.display_value = this.#equalsoperation[0];
-      result = this.operation(this.#equalsoperation[1]);
-      this.#operations.push([result, 99, false]);
+      this.operation(99);
     } else {
       this.#equalsoperation = [this.display_value, last_op[1]];
+      this.operation(99);
     }
 
     //append
+  }
+
+  get grandTotal() {
+    return this.#memory_register.reduce((acc, cur) => acc + cur);
   }
 
   get lastOperation() {
@@ -298,10 +360,13 @@ class TwelveDigit extends Calculator {
 
   operationRestrictor(restrict) {
     let maxdigit = this.#maxdigit;
+    const restrict_str = String(restrict);
 
-    if (String(restrict).length > maxdigit) {
-      const restrict_str = String(restrict);
-      if (restrict_str.slice(0, maxdigit + 1).includes(".")) {
+    if (restrict_str.length > maxdigit || restrict_str.includes("e")) {
+      if (
+        restrict_str.slice(0, maxdigit + 1).includes(".") &&
+        !restrict_str.includes("e")
+      ) {
         return +restrict_str.slice(0, maxdigit + 1);
       } else {
         this.display(+restrict_str.slice(0, maxdigit));
@@ -328,8 +393,9 @@ class TwelveDigit extends Calculator {
   operation(button) {
     if (!this.canAccept()) return;
     const res = super.operation(button, 0);
-    if (res) {
+    if (Number.isFinite(res)) {
       const restricted = this.operationRestrictor(res);
+      this.display_valuestr = restricted + "";
       this.display(restricted);
     }
   }
@@ -338,10 +404,15 @@ class TwelveDigit extends Calculator {
 const calculator = new TwelveDigit();
 let calc = calculator;
 
+const btnClickHandler = function () {
+  const rand = Math.floor(Math.random() * 4);
+  new Audio(`src/audio/sound--${rand}.mp3`).play();
+};
 calc.chassis.addEventListener("click", function (e) {
   if (e.target.dataset.element != "button") return;
   //
   const op = e.target.dataset.button;
+  btnClickHandler();
   console.log(op);
   switch (op) {
     case "input":
@@ -358,5 +429,10 @@ calc.chassis.addEventListener("click", function (e) {
       return;
     case "equals":
       calc.equals();
+      return;
+    case "memory":
+      return;
+    case "grandTotal":
+      return;
   }
 });
