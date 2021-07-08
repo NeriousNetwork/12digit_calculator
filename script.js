@@ -361,6 +361,8 @@ buttons = an array of all buttons in the calculator
     switch (fx) {
       case "memory_recall":
         this.memory_recall();
+        calc.label_memory.classList.remove("on");
+        calc.label_memory.classList.add("off");
         return;
       case "memory_add":
         this.#memory_register += +this.display_value;
