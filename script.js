@@ -21,13 +21,15 @@ buttons = an array of all buttons in the calculator
   99 - Equals
    */
   #totals = []; //List of all appended results from '=' or 'MU'
-  #memory_register = []; //list of all saved values in memory
+  #memory_register = 0; //list of all saved values in memory
+  #grandtotal_register = [];
   display_value = 0; //value of current display
   display_valuestr = "";
   #state = false; //0 if calculator is off, 1 if on.
   #stall = false; //0 if stall is off, 1 if on
   #simulatezero = false; //a simulate zero
-  chain = false;
+  lastpressed;
+  //chain = false;
   #equalsoperation = [];
   constructor() {
     //get and log all the tags with 'data-display attributes'
@@ -35,9 +37,9 @@ buttons = an array of all buttons in the calculator
     const dataelemattrib = document.querySelectorAll("[data-element]");
     dataelemattrib.forEach(function (node) {
       //pushes all buttons, displays and chassis to a dict
-      //   console.log(node);
-      //   console.log(node.dataset.display);
-      //   console.log(interfaces);
+      //   //(node);
+      //   //(node.dataset.display);
+      //   //(interfaces);
       if (interfaces === undefined) {
         interfaces[node.dataset.element] = [node];
       }
@@ -54,10 +56,16 @@ buttons = an array of all buttons in the calculator
     this.label_display = interfaces["display"].find(
       (display) => display.dataset.display == "on"
     );
+    this.label_memory = interfaces["display"].find(
+      (display) => display.dataset.display == "memory"
+    );
 
+    this.label_grandtotal = interfaces["display"].find(
+      (display) => display.dataset.display == "grandTotal"
+    );
     //sets chassis
     this.chassis = interfaces["container"]?.find(
-      (container) => (container.dataset.container = "chassis")
+      (container) => container.dataset.container == "chassis"
     );
   }
 
@@ -69,20 +77,25 @@ buttons = an array of all buttons in the calculator
     this.#totals = [];
     this.label_display.textContent = 0;
     this.#totals = [];
-    this.#memory_register = [];
+    this.#memory_register = 0;
     this.display_valuestr = "";
     this.display_value = 0;
+    this.#grandtotal_register = [];
 
     this.#simulatezero = false;
-    this.chain = false;
+    //this.chain = false;
+    calc.label_memory.classList.remove("on");
+    calc.label_memory.classList.add("off");
     this.#operations = [];
     this.#equalsoperation = [];
     this.stall(0);
+    this.label_grandtotal.classList.add("off");
+    this.label_grandtotal.classList.remove("on");
   }
 
   onClear() {
     //turn on and clear handler
-    console.log("On clear!");
+    //("On clear!");
     if (this.#state == true) {
       this.wipeMem();
       //remove stall
@@ -108,7 +121,7 @@ buttons = an array of all buttons in the calculator
     if (this.#state == true && this.#stall == false) {
       return true;
     } else {
-      console.log("Locked!");
+      //("Locked!");
       return false;
     }
   }
@@ -153,7 +166,7 @@ buttons = an array of all buttons in the calculator
       this.label_display.textContent = +this.display_value;
     } else {
       //decimal handler
-      console.log(this.display_valuestr, this.display_value);
+      //(this.display_valuestr, this.display_value);
       if (this.display_valuestr.slice(-1) === ".") {
         //checks if the last index of the string is a decimal, then if it is, it displays the display value with a decimal literal
         this.label_display.textContent = `${this.display_value}.`;
@@ -175,7 +188,15 @@ buttons = an array of all buttons in the calculator
       this.label_display.textContent = value;
       setTimeout(() => this.label_display.classList.remove("hidden"));
 
-      console.log(this);
+      //grandtotal handler
+      if (!+value) return;
+      if (+value === this.grandTotal) {
+        this.label_grandtotal.classList.remove("off");
+        this.label_grandtotal.classList.add("on");
+      } else {
+        this.label_grandtotal.classList.add("off");
+        this.label_grandtotal.classList.remove("on");
+      }
     }
   }
 
@@ -224,7 +245,7 @@ buttons = an array of all buttons in the calculator
   }
   truncate() {
     this.display_valuestr = this.display_valuestr.slice(0, -1);
-    console.log(this.display_valuestr);
+    //(this.display_valuestr);
     if (this.display_valuestr == "") {
       this.display_value = 0;
       this.display(0);
@@ -250,7 +271,7 @@ buttons = an array of all buttons in the calculator
     }
     const last_op = this.lastOperation;
     let res;
-    console.log("In operation", btn_val);
+    //("In operation", btn_val);
 
     if (btn_val === 7) {
       this.truncate();
@@ -259,7 +280,7 @@ buttons = an array of all buttons in the calculator
     if (!last_op) {
       this.#operations.push([this.display_value, btn_val, true]);
       this.#simulatezero = true;
-      console.log("No last op");
+      //("No last op");
       return;
     } else {
       //percentage handler
@@ -267,7 +288,7 @@ buttons = an array of all buttons in the calculator
         res = this.computation(last_op[0], this.display_value, btn_val);
         if (!res) return;
         this.restDisplay;
-        this.#memory_register.push(res);
+        this.#grandtotal_register.push(res);
         this.#operations.push([this.display_value, 99, false]);
         this.#operations.push(res, 0, false);
         return res;
@@ -280,7 +301,7 @@ buttons = an array of all buttons in the calculator
           this.#equalsoperation[1]
         );
         this.restDisplay(res);
-        this.#memory_register.push(res);
+        this.#grandtotal_register.push(res);
         this.#operations.push([res, 99, false]);
         return res;
       } else {
@@ -289,19 +310,24 @@ buttons = an array of all buttons in the calculator
           this.#simulatezero = true;
           return;
         }
-        console.log("Last operation not an equal operation");
+        //("Last operation not an equal operation");
         if (last_op[2] == false) {
-          console.log("Appending empty operation.");
+          //("Appending empty operation.");
           this.#operations.push([this.display_value, btn_val, true]);
           this.#simulatezero = true;
         } else {
-          console.log("Performing operation");
+          //("Performing operation");
           res = this.computation(last_op[0], this.display_value, last_op[1]);
-          console.log(calc);
-          this.#operations.push([res, btn_val, true]);
+          //(calc);
+
           this.#simulatezero = true;
           if (style === 1) this.display(res);
-          if (btn_val === 99) this.#memory_register.push(res);
+          if (btn_val === 99) {
+            this.#operations.push([res, btn_val, false]);
+            this.#grandtotal_register.push(res);
+          } else {
+            this.#operations.push([res, btn_val, true]);
+          }
         }
       }
     }
@@ -322,8 +348,42 @@ buttons = an array of all buttons in the calculator
     //append
   }
 
+  grandTot() {
+    const total = this.grandTotal;
+    this.restDisplay(total);
+    this.display(total);
+    this.#operations.push([this.display_value, 0, false]);
+  }
+
+  memory(btn) {
+    const fx = btn.dataset.memory;
+    this.#simulatezero = true;
+    switch (fx) {
+      case "memory_recall":
+        this.memory_recall();
+        return;
+      case "memory_add":
+        this.#memory_register += +this.display_value;
+        return;
+      case "memory_subtract":
+        this.#memory_register -= +this.display_value;
+        return;
+    }
+  }
+
+  memory_recall() {
+    //(this.lastpressed);
+    if (this.lastpressed.dataset?.memory == "memory_recall") {
+      //("Memory clear!");
+      this.#memory_register = 0;
+    }
+
+    this.restDisplay(this.#memory_register);
+    this.display(this.#memory_register);
+  }
   get grandTotal() {
-    return this.#memory_register.reduce((acc, cur) => acc + cur);
+    if (this.#grandtotal_register.length === 0) return 0;
+    return this.#grandtotal_register.reduce((acc, cur) => acc + cur);
   }
 
   get lastOperation() {
@@ -349,7 +409,7 @@ class TwelveDigit extends Calculator {
     let maxdigit = this.#maxdigit;
     //if length is > max digit, return false
     //else, return true
-    //console.log(isfloat, maxdigit);
+    ////(isfloat, maxdigit);
     if (`${prev}${to_add}`.includes(".")) maxdigit++;
     if (String(+`${prev}${to_add}`).length > maxdigit) {
       return false;
@@ -380,13 +440,13 @@ class TwelveDigit extends Calculator {
 
   input(button) {
     if (!this.canAccept()) return;
-    console.log(button);
+    //(button);
     const btn_val = button.dataset.value;
-    console.log(this.display_value, btn_val);
+    //(this.display_value, btn_val);
     if (this.inputRestrictor(this.display_value, btn_val)) {
       super.input(button);
     } else {
-      console.log("Length restricted!");
+      //("Length restricted!");
     }
   }
 
@@ -413,26 +473,32 @@ calc.chassis.addEventListener("click", function (e) {
   //
   const op = e.target.dataset.button;
   btnClickHandler();
-  console.log(op);
+
+  //(op);
   switch (op) {
     case "input":
       calc.input(e.target);
-      return;
+      break;
     case "onclear":
       calc.onClear();
-      return;
+      break;
     case "off":
       calc.turnOff();
-      return;
+      break;
     case "operation":
       calc.operation(e.target);
-      return;
+      break;
     case "equals":
       calc.equals();
-      return;
+      break;
     case "memory":
-      return;
+      calc.label_memory.classList.remove("off");
+      calc.label_memory.classList.add("on");
+      calc.memory(e.target);
+      break;
     case "grandTotal":
-      return;
+      calc.grandTot();
+      break;
   }
+  calc.lastpressed = e.target;
 });
